@@ -1,0 +1,41 @@
+---
+title: "workshop_script"
+author: "Derrick Theophille"
+format: html
+---
+
+```{r}
+#| label: packages
+
+library(tidyverse)
+library(here)
+```
+
+
+# Growth curves
+
+Using the von Bertalanffy equation, where:
+Linf: theoretical maximum length
+K: growth coefficient
+t0: theoretical age at zero length
+
+```{r}
+#| label: von Bertalanffy growth curve
+
+age <- 1
+TLage1 <- 607.7*(1-exp(-0.17*(age + 1.88)))
+TLage1
+```
+
+
+```{r}
+#| label: load csv file
+
+allage <- read.csv(here("00_raw_data", "20230814.csv"), header = TRUE)
+
+summary(allage)
+head(allage)
+tail(allage)
+
+```
+
