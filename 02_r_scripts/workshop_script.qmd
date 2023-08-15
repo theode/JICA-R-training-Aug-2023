@@ -9,6 +9,12 @@ format: html
 
 library(tidyverse)
 library(here)
+
+# install.packages(c("FSA", "FSAdata", "nlstools")) # Fishery Stock Assessment and other tools
+
+library(FSA) # Simple Fishery Stock Assessment methods
+library(FSAdata) # data to support FSA package
+library(nlstools) # Tools for nonlinear regression analysis
 ```
 
 
@@ -40,11 +46,13 @@ str(allage)
 ```
 
 ```{r}
+#| label: plot-histogram-base-r
+
 hist(allage$length)
 ```
 
 ```{r}
-#| label: plot-histogram
+#| label: plot-histogram-ggplot
 
 ggplot(data = allage,
        aes(x = length, 
@@ -57,7 +65,6 @@ ggsave(here("03_plots", "lengths_comp.jpg"), height = 5, width = 5)
 ```{r}
 #| label: Growth curve of yellowtail snapper length and age observations
 
-
 age <- c(1:13)
 # Total length mean is predicted
 TLmean <- 607.7*(1-exp(-0.17*(age + 1.88)))
@@ -68,4 +75,18 @@ plot(TLmean, type = "l")
 points(x = allage$age, y = allage$length)
 ```
 
+```{r}
+#| label: using-stock-assessment-tools
+
+# Calculate appropriate initial values
+f.start <- vbStarts(length ~ age, 
+                    data = allage)
+
+# Non-linear regression
+growth <- nls(length ~ Linf*(1-exp(-K*(age-t0))), 
+              data = allage,
+              start = f.start)
+
+overview(growth)
+```
 
