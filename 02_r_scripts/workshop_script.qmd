@@ -36,6 +36,36 @@ allage <- read.csv(here("00_raw_data", "20230814.csv"), header = TRUE)
 summary(allage)
 head(allage)
 tail(allage)
-
+str(allage)
 ```
+
+```{r}
+hist(allage$length)
+```
+
+```{r}
+#| label: plot-histogram
+
+ggplot(data = allage,
+       aes(x = length, 
+           fill = as.factor(age))) +
+  geom_histogram(position = "identity")
+
+ggsave(here("03_plots", "lengths_comp.jpg"), height = 5, width = 5)
+```
+
+```{r}
+#| label: Growth curve of yellowtail snapper length and age observations
+
+
+age <- c(1:13)
+# Total length mean is predicted
+TLmean <- 607.7*(1-exp(-0.17*(age + 1.88)))
+
+# Plot curve
+plot(TLmean, type = "l")
+# Plot points of observations
+points(x = allage$age, y = allage$length)
+```
+
 
