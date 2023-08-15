@@ -7,7 +7,8 @@ format: html
 ```{r}
 #| label: packages
 
-
+library(tidyverse)
+library(here)
 ```
 
 ```{r}
