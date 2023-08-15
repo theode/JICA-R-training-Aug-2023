@@ -14,6 +14,112 @@ library(here)
 ```{r}
 #| label: load data
 
+sort(unique(map_data("world")$reg))
 
+# specify area name
+# carib <- map_data("world", region = c("Saint Kitts", "Nevis", "Antigua", "Barbuda", "Dominica$", "Saint Lucia", "Saint Vincent", "Grenada", "Grenadines"))
+
+carib <- map_data("world", region = c("Saint Lucia", "Saint Vincent", "Grenada", "Grenadines"))
+
+# Plot map
+ggplot(carib, aes(x = long, y = lat, group = group,
+                  fill = region)) +
+  geom_polygon(colour = "black") +
+  theme_bw()
 ```
 
+```{r}
+#| label: load-catch-data
+
+catch_data <- read.csv(here("00_raw_data", "20230815.csv"), 
+                       header = T)
+
+ggplot() +
+  # scatter plot of catch locations
+  geom_point(data = catch_data, 
+             aes(x = long, y = lat,
+                 color = month)) +
+  # map plot of area
+  geom_polygon(data = carib, 
+               aes(x = long, y = lat, 
+                   group = group, fill = region),
+               color = "black") +
+  theme_bw()
+
+# Plot with facets
+ggplot() +
+  # scatter plot of catch locations
+  geom_point(data = catch_data, 
+             aes(x = long, y = lat,
+                 color = catch.SL)) +
+  # map plot of area
+  geom_polygon(data = carib, 
+               aes(x = long, y = lat, 
+                   group = group, fill = region),
+               color = "black") +
+  facet_wrap(~month) +
+  theme_bw()
+```
+
+```{r}
+catch_data <- catch_data |> 
+  mutate(across(month, ~factor(.)))
+```
+
+# Assignment
+
+## Q1: Make a lattice graph using the data in 20230814.csv. make histograms on length by age (black and white)
+
+```{r}
+# Load data
+data_20230814 <- read.csv(here("00_raw_data", "20230814.csv"))
+
+# Plot
+ggplot(data_20230814, aes(x = length)) +
+  geom_histogram() +
+  facet_wrap(~age) +
+  theme_bw() +
+  labs(title = "Length frequency facetted by age classes",
+       x = "Lengths",
+       y = "Frequency")
+
+ggsave(here("03_plots", "lengths_by_age.png"), 
+       height = 5, width = 5)
+```
+
+
+## Q2: make a lattice graph using data in 20230815.csv. make histograms of catch amount by month.
+
+```{r}
+# Load data
+data_20230815 <- read.csv(here("00_raw_data", "20230815.csv"))
+
+# Plot
+ggplot(data_20230815, aes(x = catch.SL)) +
+  geom_histogram() +
+  facet_wrap(~month) +
+  theme_bw() +
+  labs(title = "Catch frequency facetted by month",
+       x = "Catch",
+       y = "Frequency")
+
+ggsave(here("03_plots", "catch_by_month.png"), 
+       height = 5, width = 5)
+```
+
+## Q3: Make a map plot of your country
+
+```{r}
+# Plot map
+ggplot(map_data("world", region = "Dominica$"), 
+       aes(x = long, y = lat, 
+           group = group, fill = region)) +
+  geom_polygon(colour = "black") +
+  theme_bw()
+
+ggsave(here("03_plots", "poly_map_dominica.png"), 
+       height = 5, width = 5)
+```
+
+
+Save all graphs as png or jpg file. Height and width must be 5 inches. Upload graphs into the Google Drive shared with instructors.
