@@ -1,0 +1,83 @@
+---
+title: "Day 3"
+author: "Derrick Theophille"
+format: html
+---
+
+```{r}
+#| label: packages
+
+library(tidyverse)
+library(here)
+```
+
+
+```{r}
+#| label: calculate-CV-lengths
+
+# Load data
+data_20230814 <- read.csv(here("00_raw_data", "20230814.csv"))
+
+# Calculate Coefficient of Variance (CV) of the lengths data
+cv <- sd(data_20230814$length)/mean(data_20230814$length)
+```
+
+```{r}
+#| label: calculate-CV-catch
+
+# Load data
+data_20230815 <- read.csv(here("00_raw_data", "20230815.csv"))
+
+# Calculate Coefficient of Variance (CV) of the catch data
+cv <- sd(data_20230815$catch.SL)/mean(data_20230815$catch.SL)
+```
+
+```{r}
+#| label: calculate-sample-size
+
+# Total boats landed
+N <- 500
+# Mean catch of the boats (estimated catch)
+m <- 20
+# Standard deviation of the catch
+sigma <- 10
+# Coefficient of variation
+CV <- 0.1
+
+# Sample size
+# Sample size is denoted as "n" in literature
+samp_size <- N/(1+(N-1)*(m*CV/sigma)^2)
+```
+
+# Estimating age or species composition of catch
+
+```{r}
+
+# sample size age/species composition
+N <- 100
+p <- 0.05
+CV <- 0.1
+
+N/(1+(N-1)*(p*CV^2)/(1-p))
+```
+
+```{r}
+# estimating mean length/weight
+
+std_dev_kg <- 0.2
+mean_wt_kg <- 1
+CV <- 0.1
+N <- 3000
+
+# Find n (sample size)
+samp_size <- N/(1+(N-1)*(mean_wt_kg*CV/std_dev_kg)^2)
+```
+
+# Indices of importance of each stock
+
+1. Food-supply importance
+2. Economical importance
+3. Lifespan
+4. Area
+
+

@@ -1,0 +1,14 @@
+---
+title: "Day 4"
+author: "Derrick Theophille"
+format: html
+---
+
+# Text
+
+```{r}
+#| label: packages
+
+
+```
+
