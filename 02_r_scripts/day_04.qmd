@@ -4,11 +4,124 @@ author: "Derrick Theophille"
 format: html
 ---
 
-# Text
+# Standardized CPUE
+
+## Relative abundance indices
+
+Catch data, nominal CPUE, and standardized CPUE are used as indices of abundance. Need at least 10 years for any reliable assessment.
+
+CPUE can be:
+- total catch per number of fishers (divers) per day; used for conch or lobsters
+- total catch per number of fishing operations, sets, or hauls; used for operations such as fish pots or nets
+- total catch per number of gear (hooks, pots, etc.); used for hook and line fisheries, but also pots
+- total catch per number of fishing trips
+- total catch per total duration of sets; used for pots or nets
+- total catch 
+
+## CPUE equation
+
+Catch = qEN, where
+q = the extent to which the stock is susceptible to fishing, AKA catchability
+E = effort
+N = abundance
+
+
+CPUE = catch/E
+
+## What is standardised CPUE?
+
+This is the removal of the unnecessary effects on catchability inherent in things such as season, area (location), and gear. Nominal CPUE usually contains these unnecessary effects on catchability.
+
+Generalized Linear Model (GLM) is used to determine standardised CPUE.
 
 ```{r}
 #| label: packages
 
+library(tidyverse)
+library(here)
+```
+
+```{r}
+#| label: calculate-standardiseed-CPUE
+
+# load data
+catch <- read.csv(here("00_raw_data", "nominalCPUE.csv"))
+
+# estimate-standardised-CPUE
+catch$nominal[catch$nominal <0] <- 0
+
+plot(tapply(catch$nominal, catch$year, mean), type = "l",
+     xlab = "Year",
+     ylab = "Relative abundance",
+     axes = F)
+# par(new = T)
+# plot(N, type = "l", lwd = 3, col = "lightgrey") # This line should show the estimated stock abundance
+
+op <- glm(nominal ~ year + month + area, data = catch)
+summary(op)
+
+newdata <- expand.grid(year = c(2013:2022), 
+                       month = c(1:12), 
+                       area = c(1, 2))
+
+# Create a new column to estimate catch amount for each row 
+newdata$est <- predict(op, newdata)
+
+par(new = T)
+plot(tapply(newdata$est, newdata$year, mean), 
+     type = "l", col = "blue",
+     ylab = "",
+     xlab = "")
+```
+
+```{r}
+#| label: exercise
+
+# load-data
+catch_02 <- read.csv(here("00_raw_data", "nominalCPUE2.csv"))
+
+# estimate standardised CPUE
+catch_02 <- catch_02 |> 
+  mutate(nominal = ifelse(nominal <0, 0, nominal))
+
+op <- glm(nominal ~ year + month + area, data = catch_02)
+summary(op)
+
+# plot annual nominal CPUE and standardised  CPUE
+plot(tapply(catch_02
+            $nominal, catch_02$year, mean), 
+     type = "l",
+     xlab = "Year",
+     ylab = "Relative abundance",
+     axes = F)
+
+summary(catch_02)
+
+newdata <- expand.grid(year = c(2013:2022), 
+                       month = c(1:12), 
+                       area = c(1, 2))
+
+# Create a new column to estimate catch amount for each row 
+newdata$est <- predict(op, newdata)
+
+# PLot
+par(new = T)
+plot(tapply(newdata$est, newdata$year, mean), 
+     type = "l", col = "blue",
+     ylab = "",
+     xlab = "",
+     axes = F)
+axis(side = 1, at = c(1:10), c(2013:2022))
+axis(side = 2, labels = F)
+legend("topleft", legend = c("Nominal CPUE", "Standardized CPUE"), col = c("black", "blue"), lwd = c(2,2))
+
 
 ```
+
+
+# CMSY
+
+Catch Maximum Sustainable Yield (CMSY)
+
+
 
